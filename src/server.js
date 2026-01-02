@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const app = express();
 
+// Middleware
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
@@ -24,24 +25,27 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Server error' });
 });
 
-// Start server
+// Start server FIRST, then connect database
 const PORT = process.env.PORT || 5000;
 const { sequelize } = require('./config/database');
 
 const startServer = async () => {
   try {
+    // START LISTENING IMMEDIATELY (this is the fix!)
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+    
+    // Connect database in background
     await sequelize.authenticate();
     console.log('✅ Database connected');
     
     await sequelize.sync({ alter: true });
     console.log('✅ Database synced');
     
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-    });
   } catch (error) {
     console.error('❌ Error:', error);
-    process.exit(1);
+    // Don't exit - server is already running
   }
 };
 

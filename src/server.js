@@ -31,7 +31,7 @@ const { sequelize } = require('./config/database');
 
 const startServer = async () => {
   try {
-    // START LISTENING IMMEDIATELY (this is the fix!)
+    // ✅ START LISTENING IMMEDIATELY (THE FIX!)
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
@@ -44,7 +44,7 @@ const startServer = async () => {
     console.log('✅ Database synced');
     
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error('❌ Database error:', error);
     // Don't exit - server is already running
   }
 };
